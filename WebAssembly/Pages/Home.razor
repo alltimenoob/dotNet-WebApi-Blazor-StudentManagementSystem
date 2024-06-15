@@ -1,0 +1,41 @@
+﻿@page "/"
+@using ApplicationLayer.Contracts
+@using DomainLayer.Entities
+@inject IStudentService studentService
+
+<PageTitle>Home</PageTitle>
+
+@* <Toasts class="p-3" Messages="messages" Delay="6000" Placement="ToastsPlacement.TopRight" />
+<EditForm Model="student" OnSubmit="Save">
+        <InputText @bind-Value="student.FirstName" DisplayName="Name"></InputText>
+        <InputNumber @bind-Value="student.Age" DisplayName="Age" ></InputNumber>
+        <button class="btn btn-primary mt-5 mb-5" type="submit">Save</button>
+</EditForm>
+
+@code{
+    Student student = new();
+    List<ToastMessage> messages = new List<ToastMessage>();
+
+    async Task Save()
+    {
+        var (flag,message) = await studentService.AddAsync(student);
+        Console.WriteLine(flag);
+
+        void ShowMessage(ToastType toastType, String message) => messages.Add(CreateToastMessage(toastType,message));
+
+        ToastMessage CreateToastMessage(ToastType toastType,String message)
+       => new ToastMessage
+            {
+                Type = toastType,
+                Title = "Info",
+                Message = message,
+            };
+        if (flag)
+        {
+            ShowMessage(ToastType.Success,message);
+        } else
+        {
+            ShowMessage(ToastType.Warning,message);
+        }
+    }
+} *@
